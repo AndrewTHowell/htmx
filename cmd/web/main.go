@@ -40,6 +40,8 @@ func main() {
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileserver))
 	mux.HandleFunc("GET /{$}", app.home)
 	mux.HandleFunc("GET /gopher", app.gopher)
+	mux.HandleFunc("GET /users", app.listUsers)
+	mux.HandleFunc("GET /users/search", app.searchUsers)
 
 	// Start the HTTP server.
 	logger.Info("starting server", "port", 5051)
