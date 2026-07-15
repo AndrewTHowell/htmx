@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+func isHTMXRequest(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	err := app.html.render(w, http.StatusOK, nil, "base", "pages/home.tmpl")
 	if err != nil {
@@ -66,7 +70,13 @@ func (app *application) searchUsers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := app.html.render(w, http.StatusOK, matches, "users:rows", "pages/users.tmpl")
+	// Render the base template by default, but render the users:rows template instead if it's a HTMX request (a partial).
+	template := "base"
+	if isHTMXRequest(r) {
+		template = "users:rows"
+	}
+
+	err := app.html.render(w, http.StatusOK, matches, template, "pages/users.tmpl")
 	if err != nil {
 		app.logger.Error(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
