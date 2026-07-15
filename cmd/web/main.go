@@ -39,6 +39,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileserver))
 	mux.HandleFunc("GET /{$}", app.home)
+	mux.HandleFunc("GET /gopher", app.gopher)
 
 	// Start the HTTP server.
 	logger.Info("starting server", "port", 5051)
