@@ -14,8 +14,15 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gopher(w http.ResponseWriter, r *http.Request) {
-	width := 100
-	err := app.html.render(w, http.StatusOK, width, "partial:image:gopher")
+	// Render the full page by default, but render the partial image instead if it's a HTMX request.
+	template := "base"
+	var data any
+	if isHTMXRequest(r) {
+		template = "partial:image:gopher"
+		data = 100
+	}
+
+	err := app.html.render(w, http.StatusOK, data, template, "pages/gopher.tmpl")
 	if err != nil {
 		app.logger.Error(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
