@@ -15,6 +15,17 @@ type application struct {
 	html   *htmlRenderer
 }
 
+func securityMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		w.Header().Set("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
@@ -45,7 +56,7 @@ func main() {
 
 	// Start the HTTP server.
 	logger.Info("starting server", "port", 5051)
-	err = http.ListenAndServe(":5051", mux)
+	err = http.ListenAndServe(":5051", securityMiddleware(mux))
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
