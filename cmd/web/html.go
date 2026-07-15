@@ -57,6 +57,11 @@ func (h *htmlRenderer) render(w http.ResponseWriter, status int, data any, templ
 		return err
 	}
 
+	// Return header warning caches that content varies. This is because the
+	// response will depend on whether the request was from HTMX, where only a
+	// partial render is returned.
+	w.Header().Add("Vary", "HX-Request")
+
 	w.WriteHeader(status)
 	buf.WriteTo(w)
 
