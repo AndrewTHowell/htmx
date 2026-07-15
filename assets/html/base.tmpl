@@ -22,7 +22,14 @@
         <script defer src="/static/js/htmx.min.js"></script>
     </head>
     <body>
-        <h1><a href="/">Andrew Howell</a></h1>
+        <header>
+            <h1><a href="/">Andrew Howell</a></h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/gopher">Gopher</a>
+                <a href="/users">Users</a>
+            </nav>
+        </header>
         <main>
             {{template "page:content" .}}
         </main>
