@@ -67,3 +67,17 @@ func (h *htmlRenderer) render(w http.ResponseWriter, status int, data any, templ
 
 	return nil
 }
+
+func isHTMXRequest(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
+}
+
+func redirect(w http.ResponseWriter, r *http.Request, url string, code int) {
+	if isHTMXRequest(r) {
+		w.Header().Set("HX-Redirect", url)
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	http.Redirect(w, r, url, code)
+}

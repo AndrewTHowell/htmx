@@ -5,10 +5,6 @@ import (
 	"strings"
 )
 
-func isHTMXRequest(r *http.Request) bool {
-	return r.Header.Get("HX-Request") == "true"
-}
-
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	err := app.html.render(w, http.StatusOK, nil, "base", "pages/home.tmpl")
 	if err != nil {
