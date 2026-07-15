@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io/fs"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -80,4 +81,12 @@ func redirect(w http.ResponseWriter, r *http.Request, url string, code int) {
 	}
 
 	http.Redirect(w, r, url, code)
+}
+func browserURL(r *http.Request) (*url.URL, error) {
+	cu := r.Header.Get("HX-Current-URL")
+	if cu != "" {
+		return url.Parse(cu)
+	}
+
+	return r.URL, nil
 }
